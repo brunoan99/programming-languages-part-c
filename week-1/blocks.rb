@@ -47,9 +47,49 @@ Examples
 =end
 a = Array.new(5) {|i| 4*(i+1)}
 a.each { puts "hi" }
-a.each { puts (|x| x * 2)}
+a.each {|x| puts (x * 2)}
 a.map {|x| x * 2 } # synonym: collect
 a.any? {|x| x > 7 }
 a.all? {|x| x > 7 }
 a.inject(0) {|acc,elt| acc + elt }
 a.select {|x| x > 7 }
+
+
+# Using Blocks #
+
+# More strangeness
+=begin
+
+- Callee does not give a name to the (potential) block argument
+
+- Instead, just calls it with yield or yield(args)
+  - Silly example
+=end
+def silly a
+  (yield a) + (yield 42)
+end
+
+silly(5) {|b| b*2}
+=begin
+- Can ask block_given? but often just assume a block is given or that a block's presence is implied by other arguments
+=end
+
+class Foo
+  def initialize(max)
+    @max = max
+  end
+
+  def silly
+    yield(4,5) + (yield(@max,@max))
+  end
+
+  def count base
+    if base > @max
+      raise "rechead max"
+    elsif yield base
+      1
+    else
+      1 + (count(base + 1) {|i| yield i})
+    end
+  end
+end

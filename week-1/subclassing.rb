@@ -80,3 +80,97 @@ c1.instance_of? ColorPoint      # true
     "is a" Point but is not an "instance of" Point
 
 =end
+
+
+# Why Use Subclassing?
+
+# Example continued
+=begin
+
+- Consider alternatives to
+    class ColorPoint < Point ... end
+
+- Here subclassing is a good choice, but programmers often overuse subclassing in OOP languages
+
+=end
+
+
+# Why subclass
+=begin
+
+- Instead of creating ColorPoint, could add methods to Point
+  - That could mess up other users and subclassers of Point
+
+      class Point
+        attr_accessor :color
+        def initialize(x,y,c="clear")
+          @x = x
+          @y = y
+          @color = c
+        end
+      end
+
+=end
+
+# Why subclass
+=begin
+
+- Instead of subclassing Point, could copy/paste the methods
+  - Means the same thing if you don't use methods like is_a?
+    and superclass, but of course code reuse is nice
+
+      class ColorPoint
+        attr_accessor :x, :y, :color
+        def initialize(x,y,c="clear")
+          @x = x
+          @y = y
+          @color = c
+        end
+
+        def distFromOrigin
+          Math.sqrt(@x * @x + @y * @y) # uses instance variables
+        end
+
+        def distFromOrigin2
+          Math.sqrt(x * x + y * y) # uses getter methods
+        end
+      end
+
+=end
+
+
+# Why subclass
+=begin
+
+- Instead of subclassing Point, could use a Point instance variable
+  - Define methods to send same message to the Point
+  - Often OOP programmers overuse subclassing
+  - But for ColorPoint, subclassing makes sense: less work and can use ColorPoint wherever code expects a Point
+
+      class ColorPoint
+        attr_accessor :x, :y, :color
+        def initialize(x,y,c="clear")
+          @pt = Point.new(x,y)
+          @color = c
+        end
+
+        def distFromOrigin
+          x = @pt.x
+          y = @pt.y
+          Math.sqrt(x * x + y * y) # uses instance variables
+        end
+
+        def distFromOrigin2
+          Math.sqrt(x * x + y * y) # uses getter methods
+        end
+
+        def x
+          @pt.x
+        end
+
+        def y
+          @pt.y
+        end
+      end
+
+=end

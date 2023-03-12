@@ -123,7 +123,7 @@ class Int < Value
     @i == 0
   end
 
-  def noNegateConstants
+  def noNegConstants
     if i < 0
       Negate.new(Int.new(-i))
     else
@@ -150,8 +150,8 @@ class Negate < Exp
     e.hasZero
   end
 
-  def noNegateConstants
-    Negate.new(e.noNegateConstants)
+  def noNegConstants
+    Negate.new(e.noNegConstants)
   end
 end
 
@@ -174,8 +174,8 @@ def Add < Exp
     e1.hasZero || e2.hasZero
   end
 
-  def noNegateConstants
-    Add.new(e1.noNegateConstants, e2.noNegateConstants)
+  def noNegConstants
+    Add.new(e1.noNegConstants, e2.noNegConstants)
   end
 end
 
@@ -199,8 +199,8 @@ def Mult < Exp
     e1.hasZero || e2.hasZero
   end
 
-  def noNegateConstants
-    Mult.new(e1.noNegateConstants, e2.noNegateConstants)
+  def noNegConstants
+    Mult.new(e1.noNegConstants, e2.noNegConstants)
   end
 end
 

@@ -189,3 +189,139 @@ class ArtistCowboy < Artist, Cowboy # not Ruby!
 end
 
 =end
+
+
+# Mixins #
+
+# Mixins
+=begin
+
+- A mixin is a collection of methods
+  - Less than a class: no instances of it
+
+- Languages with mixins (e.g., Ruby modules) typically let a class have one superclass but include number of mixins
+
+- Semantics: Including a mixin makes its methods part of the class
+  - Extending or overriding in the order mixins are included in the class definition
+  - More powerful than helper methods becausee mixin methods can access methods (and instance variables)
+    on self not defined in the mixin
+
+
+=end
+
+module Doubler
+  def double
+    self + self
+  end
+end
+
+class Pt
+  attr_accessor :x, :y
+  include Doubler
+  def + other
+    ans = Pt.new
+    ans.x = self.x + other.x
+    ans.y = self.y + other.y
+    ans
+  end
+end
+
+class String
+  include Doubler
+end
+
+
+# Lookup rules
+=begin
+
+Mixins changer our lookup rules slightly:
+  - When looking for receiver obj's method m, look in obj's class,
+    then mixins that class includes (later includes shadow), then obj's superclass,
+    then the superclass'mixins, etc.
+
+  - As for instance variables, the mixin methods are included in the same object
+    - So usually bad style for mixin methods to use instance variables since a name clash would be like our CowboyArtist
+      pocket problem (but sometimes unavoidable?)
+
+=end
+
+
+# The two big ones
+=begin
+
+The two most popular/useful mixins in Ruby:
+  - Comparable: Defines <,>,==,!=,>=,<= in terms of <=>
+    - <=> returns -1, 0 or 1 depending on the values being compared
+  - Enumerable: Defines many iterators (e.g., map, find) in terms of each
+
+Great examples of using mixins:
+  - Classes including them get a bunch of methods for just a little work
+  - Classes do not "spend" their "one superclass" for this
+  - Do not neeed the complexity of multiple inheritance
+
+=end
+
+class Name
+  attr_accessor :first, :middle, :last
+  include Comparable
+  def initialize (first, last, middle="")
+    @first = first
+    @middle = middle
+    @last = last
+  end
+
+  def <=> other
+    l = @last <=> other.last  # <=> defined on strings
+    return l if l != 0
+    f = @first <=> other.first
+    return f if f != 0
+    @middle <=> other.middle
+  end
+end
+
+
+class MyRange
+  include Enumerable
+  def initialize (low,high)
+    @low = low
+    @high = high
+  end
+  def each
+    i=@low
+    while i <= @high
+      yield i
+      i=i+1
+    end
+  end
+end
+
+
+# Replacement for multiple inheritance?
+=begin
+
+- A mixin works pretty well for ColorPt3D
+  - Color a reasonable mixin except for using an instance variable
+
+    ```ruby
+    module Color
+      attr_accessor :color
+    end
+    ```
+
+- A mixin works awkwardly-at-best for ArtistCowboy:
+  - Natural for Artist and Cowboy to be Person subclasses
+  - Could move methods of one to a mixin, but it is odd style and still does not get you two pockets
+
+    ```ruby
+    module ArtistM ...
+
+    class Artist < Person
+      include ArtistM
+      ...
+
+    class ArtistCowboy < Cowboy
+      include ArtistM
+      ...
+    ```
+
+=end

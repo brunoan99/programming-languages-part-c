@@ -1,3 +1,11 @@
+(*
+|--------| eval | toString | hasZero | ... |
+| Int    |      |          |         |     |
+| Add    |      |          |         |     |
+| Negate |      |          |         |     |
+| ...    |      |          |         |     |
+*)
+
 datatype exp =
     Int    of int
   | Negate of exp

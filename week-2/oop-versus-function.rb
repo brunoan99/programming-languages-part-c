@@ -138,7 +138,7 @@ class Int < Value
 end
 
 
-class Int < Exp
+class Negate < Exp
   attr_reader :e
   def initialize e
     @e = e
